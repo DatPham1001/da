@@ -11,7 +11,7 @@ public class CreateAccountIM {
     public String name;
     public String phone;
     public String address;
-    public AccountTypeEnum accountType;
+    public String accountType;
     public String username;
     public String password;
 }

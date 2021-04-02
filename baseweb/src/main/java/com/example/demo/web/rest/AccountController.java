@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/account")
 public class AccountController {
     private final AccountService accountService;
@@ -24,8 +25,7 @@ public class AccountController {
 
     @PostMapping
     public ResponseEntity<?> createAccount(@RequestBody CreateAccountIM createAccountIM) {
-        Account account = accountService.createAccount(createAccountIM);
-        return ResponseEntity.ok().body(account);
+        return  accountService.createAccount(createAccountIM);
     }
 
     @GetMapping
@@ -43,8 +43,7 @@ public class AccountController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@RequestBody CreateAccountIM createAccountIM, @PathVariable Integer id) {
-        Account account = accountService.updateAccount(createAccountIM, id);
-        return ResponseEntity.ok().body(account);
+        return accountService.updateAccount(createAccountIM, id);
     }
 
     @DeleteMapping("/{id}")
