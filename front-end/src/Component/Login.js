@@ -15,8 +15,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Auth from '../Auth';
 import { useHistory } from 'react-router';
+import { axiosPostLogin } from '../Api';
 const api = axios.create({
-  baseURL: 'http://localhost:8081/api'
+  baseURL: 'http://192.168.1.199:8081/api'
 })
 function Copyright() {
   return (
@@ -66,7 +67,8 @@ function Login(props) {
   const [isLogin, setisLogin] = useState(false);
   const handleSubmit = (e) => {
     console.log(login);
-    api.post('login', login)
+    axiosPostLogin('login', login)
+      // api.post('login', login)
       .then(
         (res) => {
           console.log(res)

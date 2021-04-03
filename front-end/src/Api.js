@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const  baseURL = "http://localhost:8081/api/"
+const baseURL = "http://192.168.1.199:8081/api/"
 export const axiosPost = (token, url, data) => {
     return axios.post(baseURL + url, data, {
         headers: {
@@ -9,8 +9,14 @@ export const axiosPost = (token, url, data) => {
         },
     });
 };
-
-export const axiosGet = ( token, url) => {
+export const axiosPostLogin = (url, data) => {
+    return axios.post(baseURL + url, data, {
+        headers: {
+            "content-type": "application/json",
+        },
+    });
+};
+export const axiosGet = (token, url) => {
     return axios.get(baseURL + url, {
         headers: {
             "content-type": "application/json",

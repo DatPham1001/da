@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -31,21 +31,7 @@ import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import WorkIcon from '@material-ui/icons/Work';
 import { useHistory } from 'react-router';
-import Report from './Report';
-import MenuBar from './MenuBar';
-function Copyright() {
-    return (
-        <Typography variant="body2" color="textSecondary" align="center">
-            {'Copyright © '}
-            <Link color="inherit" href="https://material-ui.com/">
-                DatPham - Thesis
-      </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
-
+import Auth from '../Auth';
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -127,13 +113,14 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function Dashboard() {
+export default function MenuBar(props) {
+
     const classes = useStyles();
+    const history = useHistory();
     const [open, setOpen] = React.useState(true);
     const handleDrawerOpen = () => {
         setOpen(true);
     };
-    const history = useHistory();
     const handleDrawerClose = () => {
         setOpen(false);
     };
@@ -156,9 +143,14 @@ export default function Dashboard() {
         setMobileMoreAnchorEl(null);
     };
 
-    const handleMenuClose = () => {
+    const handleAccountDetail = () => {
         setAnchorEl(null);
         handleMobileMenuClose();
+    };
+    const handleLogout = () => {
+        setAnchorEl(null);
+        Auth.logout();
+        history.push("/");
     };
     const renderMenu = (
         <Menu
@@ -168,17 +160,15 @@ export default function Dashboard() {
             keepMounted
             transformOrigin={{ vertical: 'top', horizontal: 'right' }}
             open={isMenuOpen}
-            onClose={handleMenuClose}
+            onClose={() => setAnchorEl(null)}
         >
-            <MenuItem onClick={handleMenuClose}>Thông tin tài khoản</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Đăng xuất</MenuItem>
+            <MenuItem onClick={handleAccountDetail}>Thông tin tài khoản</MenuItem>
+            <MenuItem onClick={handleLogout}>Đăng xuất</MenuItem>
         </Menu>
     );
     return (
         <div className={classes.root}>
-            <CssBaseline />
-            <MenuBar title="Báo cáo"></MenuBar>
-            {/* <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
+            <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
                 <Toolbar className={classes.toolbar}>
                     <IconButton
                         edge="start"
@@ -190,8 +180,8 @@ export default function Dashboard() {
                         <MenuIcon />
                     </IconButton>
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                        Báo cáo
-  </Typography>
+                        {props.title}
+                    </Typography>
                     <IconButton aria-label="show 4 new mails" color="inherit">
                         <Badge badgeContent={4} color="secondary">
                             <MailIcon></MailIcon>
@@ -242,7 +232,7 @@ export default function Dashboard() {
                         </ListItemIcon>
                         <ListItemText primary="Quản lý ứng viên" />
                     </ListItem>
-                    <ListItem button onClick={() => history.push("/")}>
+                    <ListItem button onClick={() => history.push("/jobs")}>
                         <ListItemIcon>
                             <WorkIcon />
                         </ListItemIcon>
@@ -251,25 +241,15 @@ export default function Dashboard() {
                     <Divider />
                 </List>
                 <List>
-                    <ListItem button onClick={() => history.push("/")}>
+                    <ListItem button onClick={() => history.push("/accounts")}>
                         <ListItemIcon >
                             <AccountBoxIcon />
                         </ListItemIcon>
                         <ListItemText primary="Quản lý tài khoản" />
                     </ListItem>
                 </List>
-            </Drawer> */}
+            </Drawer>
 
-
-            <main className={classes.content}>
-                <div className={classes.appBarSpacer} />
-                <Container maxWidth="lg" className={classes.container}>
-                    {dashboard && <Report></Report>}
-                    <Box pt={4}>
-                        <Copyright />
-                    </Box>
-                </Container>
-            </main>
         </div>
-    );
+    )
 }
