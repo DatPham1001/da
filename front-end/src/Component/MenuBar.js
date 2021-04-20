@@ -71,6 +71,7 @@ const useStyles = makeStyles((theme) => ({
     },
     title: {
         flexGrow: 1,
+        paddingLeft: theme.spacing(25),
     },
     drawerPaper: {
         position: 'relative',
@@ -94,9 +95,7 @@ const useStyles = makeStyles((theme) => ({
     },
     appBarSpacer: theme.mixins.toolbar,
     content: {
-        flexGrow: 1,
-        height: '100vh',
-        overflow: 'auto',
+        paddingLeft: theme.spacing(40),
     },
     container: {
         paddingTop: theme.spacing(4),
@@ -154,6 +153,7 @@ export default function MenuBar(props) {
     };
     const renderMenu = (
         <Menu
+           className={classes.content}
             anchorEl={anchorEl}
             anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
             id="primary-search-account-menu"

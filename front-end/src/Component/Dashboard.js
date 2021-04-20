@@ -180,7 +180,7 @@ export default function Dashboard() {
             <MenuBar title="Báo cáo"></MenuBar>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
-                <Container maxWidth="lg" className={classes.container}>
+                <Container maxWidth="md" className={classes.container}>
                     {dashboard && <Report></Report>}
                     <Box pt={4}>
                         <Copyright />

@@ -3,17 +3,19 @@ package com.example.demo.web.rest;
 
 import com.example.demo.entites.Contact;
 import com.example.demo.service.ContactService;
+import com.example.demo.web.vm.ContactOM;
 import com.example.demo.web.vm.CreateContactIM;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
-
-@RestController
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+@CrossOrigin
+@Controller
 @RequestMapping("/api/contact")
+
 public class ContactController {
     private final ContactService contactService;
 
@@ -39,8 +41,13 @@ public class ContactController {
                                          @RequestParam Optional<Boolean> blacklisted,
                                          @RequestParam Optional<Integer> page,
                                          @RequestParam Optional<Integer> limit) {
-        Page<Contact> contacts = contactService.filterContacts(input.orElse(""), blacklisted.orElse(false), page.orElse(0), limit.orElse(5));
+        Page<ContactOM> contacts = contactService.filterContacts(input.orElse(""), blacklisted.orElse(false), page.orElse(0), limit.orElse(5));
         return ResponseEntity.ok().body(contacts);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getId(@PathVariable int id) {
+        return ResponseEntity.ok().body(contactService.getByID(id));
     }
 
     @DeleteMapping("/{id}")

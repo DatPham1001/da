@@ -10,4 +10,5 @@ import javax.persistence.Column;
 public class CreateJobIm {
     public String name;
     public String description;
+    public boolean recruitmentStatus;
 }

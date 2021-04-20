@@ -21,13 +21,16 @@ public class Contact extends BaseEntity {
     public String address;
     public Date bod;
     @Column(name = "job_id")
-    public Integer jobId;
-    public Integer experience;
+    public int jobId;
+    public String experience;
     @Column(name = "cv_url")
     public String cvUrl;
+    @Column(name = "meet_date")
+    public Date meetDate;
     @Column(name = "responsible_by")
     public Integer responsibleBy;
     @Column(name = "blacklisted")
     public boolean blacklisted;
+    public String note;
     public boolean deleted;
 }

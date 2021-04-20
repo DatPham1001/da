@@ -35,7 +35,7 @@ import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import { Button, Menu, MenuItem, TextField } from '@material-ui/core';
+import { Alert, Button, Menu, MenuItem, Snackbar, TextField } from '@material-ui/core';
 import MailIcon from '@material-ui/icons/Mail';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -46,7 +46,7 @@ import BarChartIcon from '@material-ui/icons/BarChart';
 import WorkIcon from '@material-ui/icons/Work';
 import { useHistory } from 'react-router';
 import MenuBar from '../MenuBar';
-import { axiosGet } from '../../Api';
+import { axiosGet, axiosPost } from '../../Api';
 import Auth from '../../Auth';
 import MaterialTable from 'material-table';
 import "./Contact.css";
@@ -61,6 +61,7 @@ import Moment from 'moment';
 import { KeyboardDatePicker, KeyboardDateTimePicker, KeyboardTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { storage } from "../Contact/firebase"
 import { setDate } from 'date-fns';
+import ContactDetail from './ContactDetail';
 function Copyright() {
     return (
         <Typography variant="body2" color="textSecondary" align="center">
@@ -137,6 +138,7 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
         height: '100vh',
         overflow: 'auto',
+        paddingLeft: theme.spacing(35)
     },
     container: {
         paddingTop: theme.spacing(4),
@@ -180,6 +182,7 @@ export default function Contact() {
     const handleClickOpen = () => {
         setOpen(true);
     };
+    const [alertCreated, setalertCreated] = useState(false);
     const [selectedDate, setSelectedDate] = React.useState(new Date());
     const [dateTime, setDatetime] = React.useState(new Date());
     useEffect(() => {
@@ -247,19 +250,45 @@ export default function Contact() {
         );
     };
     const handleSubmit = () => {
-        console.log(contact);
-        console.log(file);
+        axiosPost(Auth.token, "contact", contact)
+            .then((res) => {
+                setalertCreated(true)
+                setTimeout(() => {
+                    history.push("/contacts");
+                }, 1000);
+
+            }).catch((e) => {
+                console.log(e)
+            });
     }
     const [errorText, seterrorText] = useState("")
     const [error, seterror] = useState(false)
     const [listJob, setlistJob] = useState([]);
     const [file, setfile] = useState({});
+    //Detail
+    const [contactDetailDialog, setcontactDetailDialog] = useState(false);
+    const [contactId, setcontactId] = useState()
+    const handleContactDetail = (contactId) => {
+        setcontactDetailDialog(true)
+        setcontactId(contactId);
+    }
+    const contactDetailCallback = (dataFromChild) => {
+        setcontactDetailDialog(false)
+    };
     return (
         <div className={classes.root}>
             <MenuBar title="Quản lý ứng viên"></MenuBar>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
                 <Container maxWidth="lg" className={classes.container}>
+                    <Snackbar open={alertCreated} autoHideDuration={1000}
+                        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                        onClose={() => setalertCreated(false)}
+                    >
+                        <Alert variant="filled" severity="success">
+                            Tạo ứng viên thành công!
+                </Alert>
+                    </Snackbar>
                     <Box display='flex' justifyContent='flex-end'>
                         <Button
                             className="product-btn"
@@ -272,6 +301,7 @@ export default function Contact() {
                             Thêm mới
                 </Button>
                     </Box>
+                    <ContactDetail open={contactDetailDialog} contactDetailCallback={contactDetailCallback} contactId={contactId}></ContactDetail>
                     <MaterialTable
                         title="Danh sách ứng viên"
                         icons={tableIcons}
@@ -383,7 +413,7 @@ export default function Contact() {
                             }
                         ]}
                         onRowClick={((e, rowData) =>
-                            history.push("/contact/" + rowData.id)
+                            handleContactDetail(rowData.id)
                         )}
                         options={{
                             debounceInterval: 500,
@@ -404,7 +434,7 @@ export default function Contact() {
                         fullWidth={true}
                         maxWidth={'lg'}
                     >
-                        <DialogTitle id="alert-dialog-title">{"Thêm mới ứng viên"}</DialogTitle>
+                        <DialogTitle id="alert-dialog-title">Thêm mới ứng viên</DialogTitle>
                         <DialogContent>
                             <Grid container spacing={3}>
                                 <Grid item xs={12} sm={6}>
@@ -420,7 +450,7 @@ export default function Contact() {
                                         size="small"
                                         defaultValue=""
                                         helperText={errorText}
-
+                                        required
                                         onChange={(e) => handleCreateContact(e)}
                                     />
                                     <TextField
@@ -432,9 +462,8 @@ export default function Contact() {
                                         size="small"
                                         defaultValue=""
                                         helperText={errorText}
-
                                         onChange={(e) => handleCreateContact(e)}
-
+                                        required
                                     /> <TextField
                                         className="text-input"
                                         error={false}
@@ -444,7 +473,7 @@ export default function Contact() {
                                         size="small"
                                         defaultValue=""
                                         helperText={errorText}
-
+                                        required
                                         onChange={(e) => handleCreateContact(e)}
 
                                     /> <TextField
@@ -456,11 +485,13 @@ export default function Contact() {
                                         name="name"
                                         size="small"
                                         defaultValue=""
+                                        required
                                         helperText={errorText}
                                         onChange={(e) => handleCreateContact(e)}
                                     />
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                         <KeyboardDatePicker
+                                            size="small"
                                             disableToolbar
                                             className="text-input"
                                             variant="inline"
@@ -482,11 +513,13 @@ export default function Contact() {
                                         Chuyên môn
                                     </Typography>
                                     <TextField
+                                        size="small"
                                         id="experience"
                                         style={{ marginBottom: 20 }}
                                         className="text-input"
                                         select
                                         label="Năm kinh nghiệm"
+                                        required
                                         onChange={(event) => {
                                             setcontact((prevState) => ({
                                                 ...prevState,
@@ -499,10 +532,12 @@ export default function Contact() {
                                         <MenuItem id="experience" value={"2 năm"}>2 năm</MenuItem>
                                         <MenuItem id="experience" value={"3 năm"}>3 năm</MenuItem>
                                         <MenuItem id="experience" value={"Trên 3 năm"}>Trên 3 năm</MenuItem>
+
                                     </TextField>
                                     <TextField
+                                        size="small"
                                         id="jobId"
-                                        style={{ marginBottom: 20 }}
+                                        style={{ marginBottom: 2 }}
                                         className="text-input"
                                         select
                                         label="Vị trí ứng tuyển"
@@ -519,10 +554,11 @@ export default function Contact() {
                                             </MenuItem>
                                         ))}
                                     </TextField>
-
+                                    <p className="des-btn" onClick={() => { history.push("/jobs") }}>Thêm vị trí mới</p>
                                     <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                         <KeyboardDateTimePicker
-                                            margin="normal"
+                                            style={{ marginBottom: 20 }}
+                                            size="small"
                                             id="meetDate"
                                             className="text-input"
                                             // format='DD-MM-YYYY HH:mm:ss'
@@ -535,6 +571,7 @@ export default function Contact() {
                                         />
                                     </MuiPickersUtilsProvider>
                                     <TextField
+                                        size="small"
                                         id="note"
                                         className="text-input"
                                         style={{ marginBottom: 20 }}
