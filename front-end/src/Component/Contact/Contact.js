@@ -183,8 +183,8 @@ export default function Contact() {
         setOpen(true);
     };
     const [alertCreated, setalertCreated] = useState(false);
-    const [selectedDate, setSelectedDate] = React.useState(new Date());
-    const [dateTime, setDatetime] = React.useState(new Date());
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [dateTime, setdatetime] = useState(null)
     useEffect(() => {
         axiosGet(Auth.token, "job")
             .then((res) => {
@@ -200,7 +200,7 @@ export default function Contact() {
         }));
     };
     const handleMeetDateChange = (date) => {
-        setDatetime(date);
+        setdatetime(date)
         setcontact((prevState) => ({
             ...prevState,
             meetDate: moment(date).format('DD-MM-YYYY HH:mm:ss')
@@ -275,6 +275,12 @@ export default function Contact() {
     const contactDetailCallback = (dataFromChild) => {
         setcontactDetailDialog(false)
     };
+    const [importCvModel, setimportCvModel] = useState(false)
+    const [sheetLink, setsheetLink] = useState("")
+    const handleImportcv = () => {
+        setimportCvModel(false)
+        console.log(sheetLink);
+    }
     return (
         <div className={classes.root}>
             <MenuBar title="Quản lý ứng viên"></MenuBar>
@@ -294,12 +300,21 @@ export default function Contact() {
                             className="product-btn"
                             variant="contained"
                             color="primary"
+                            style={{ marginBottom: 20, marginRight: 10 }}
+                            onClick={() => setimportCvModel(true)}
+                        >
+                            Import ứng viên
+                      </Button>
+                        <Button
+                            className="product-btn"
+                            variant="contained"
+                            color="primary"
                             style={{ marginBottom: 20 }}
                             // onClick={() => history.push("/contact/create")}
                             onClick={handleClickOpen}
                         >
                             Thêm mới
-                </Button>
+                      </Button>
                     </Box>
                     <ContactDetail open={contactDetailDialog} contactDetailCallback={contactDetailCallback} contactId={contactId}></ContactDetail>
                     <MaterialTable
@@ -561,7 +576,7 @@ export default function Contact() {
                                             size="small"
                                             id="meetDate"
                                             className="text-input"
-                                            // format='DD-MM-YYYY HH:mm:ss'
+                                            format="dd/MM/yyyy hh:mm a"
                                             label="Ngày hẹn gặp"
                                             value={dateTime}
                                             onChange={(e) => handleMeetDateChange(e)}
@@ -623,10 +638,46 @@ export default function Contact() {
                             </Grid>
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={handleClose} color="primary">
+                            <Button onClick={handleClose} variant="contained" color="secondary">
                                 Hủy
                             </Button>
-                            <Button onClick={handleSubmit} color="primary" autoFocus>
+                            <Button onClick={handleSubmit} variant="contained" c color="primary" autoFocus>
+                                Chấp nhận
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                    <Dialog
+                        open={importCvModel}
+                        onClose={() => setimportCvModel(false)}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                        fullWidth={true}
+                        maxWidth={'lg'}
+                    >
+                        <DialogTitle id="alert-dialog-title">Điền vào link googlesheet</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                                Lưu ý : Google worksheet cần được public link
+          </DialogContentText>
+                            <TextField
+                                className="text-input"
+                                error={false}
+                                id="sheeturl"
+                                style={{ marginBottom: 20 }}
+                                label="Sheet url"
+                                size="small"
+                                defaultValue=""
+                                helperText={errorText}
+                                fullWidth
+                                onChange={(e) => setsheetLink(e.target.value)}
+                                required
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={() => setimportCvModel(false)} variant="contained" color="secondary">
+                                Hủy
+                            </Button>
+                            <Button onClick={handleImportcv} variant="contained" color="primary" autoFocus>
                                 Chấp nhận
                             </Button>
                         </DialogActions>
