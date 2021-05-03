@@ -46,7 +46,7 @@ import BarChartIcon from '@material-ui/icons/BarChart';
 import WorkIcon from '@material-ui/icons/Work';
 import { useHistory } from 'react-router';
 import MenuBar from '../MenuBar';
-import { axiosGet, axiosPost } from '../../Api';
+import { axiosGet, axiosPost, axiosPut } from '../../Api';
 import Auth from '../../Auth';
 import MaterialTable from 'material-table';
 import "./Contact.css";
@@ -189,7 +189,7 @@ export default function Contact() {
         axiosGet(Auth.token, "job")
             .then((res) => {
                 setlistJob(res.data);
-                console.log(res.data)
+                // console.log(res.data)
             });
     }, []);
     const handleDateChange = (date) => {
@@ -250,7 +250,7 @@ export default function Contact() {
         );
     };
     const handleSubmit = () => {
-        axiosPost(Auth.token, "contact", contact)
+        axiosPost(Auth.token, "contact" , contact)
             .then((res) => {
                 setalertCreated(true)
                 setTimeout(() => {
@@ -398,13 +398,13 @@ export default function Contact() {
                         ]}
                         data={query =>
                             new Promise((resolve, reject) => {
-                                let url = 'contact?name=' + query.search;
-                                url += '&limit=' + query.pageSize
+                                let url = 'contact?input=' + query.search;
+                                // url += '&limit=' + query.pageSize
                                 // url += '&page=' + (query.page + 1)
                                 axiosGet(Auth.token, url)
                                     .then(result => {
-                                        console.log(result.data)
-                                        let datas = result.data.content.map((item, index) => {
+                                        console.log(result)
+                                        let datas = result.data.map((item, index) => {
                                             let tmp = Object.assign({}, item,
                                                 { stt: ((result.data.number) * result.data.size + index + 1) },
                                                 { bod: (Moment(item.bod).format('DD-MM-YYYY')) },

@@ -79,8 +79,7 @@ function Login(props) {
           }
         }
       ).catch((e) => {
-        let res = e.response.data;
-        console.log(res);
+        console.log(e.response);
         seterrorText("Sai tài khoản hoặc mật khẩu")
         seterror(true)
 
