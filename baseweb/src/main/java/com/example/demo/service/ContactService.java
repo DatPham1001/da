@@ -2,21 +2,28 @@ package com.example.demo.service;
 
 
 import com.example.demo.entites.Contact;
+import com.example.demo.entites.Job;
 import com.example.demo.repository.ContactRepository;
 import com.example.demo.repository.JobRepository;
 import com.example.demo.web.exception.NotFoundException;
+import com.example.demo.web.vm.ContactDetailModel;
 import com.example.demo.web.vm.ContactOM;
 import com.example.demo.web.vm.CreateContactIM;
+import com.google.gson.Gson;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class ContactService {
     private final ContactRepository contactRepository;
     private final JobRepository jobRepository;
+    private static Gson gson = new Gson();
 
     @Autowired
     public ContactService(ContactRepository contactRepository, JobRepository jobRepository) {
@@ -69,12 +76,19 @@ public class ContactService {
         return contact;
     }
 
-    public Contact getByID(int id) {
-        return contactRepository.getOne(id);
+    public ContactDetailModel getByID(int id) {
+        Optional<Contact> contact = contactRepository.findById(id);
+        Optional<Job> job = jobRepository.findById(contact.get().getJobId());
+//        ContactDetailModel contactDetailModel = new ContactDetailModel();
+        String json = gson.toJson(contact.get());
+        ContactDetailModel contactDetailModel = gson.fromJson(json, ContactDetailModel.class);
+        contactDetailModel.setJobName(job.get().getName());
+        return contactDetailModel;
     }
 
-    public Page<ContactOM> filterContacts(String input, boolean blacklisted, Integer page, Integer limit) {
-        Page<ContactOM> contacts = contactRepository.filterContact(input, blacklisted, PageRequest.of(page, limit));
+    public List<ContactOM> filterContacts(String input, boolean blacklisted, Integer page, Integer limit) {
+        List<ContactOM> contacts = contactRepository.filterContact(input, blacklisted);
         return contacts;
     }
+
 }

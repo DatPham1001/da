@@ -14,7 +14,7 @@ public class  CreateContactIM {
     public String address;
     public int responsibleBy;
     public Date bod;
-    public Date meetDate;
+    public String meetDate;
     public Integer jobId;
     public String experience;
     public String cvUrl;

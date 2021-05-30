@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ContactRepository extends JpaRepository<Contact, Integer> {
     @Query(value = "SELECT a.id,a.meet_date meetDate,a.name,phone,email,address,bod,job_id as job_id,j.name as jobName,experience,cv_url as cvUrl,responsible_by as responsibleBy\n" +
@@ -18,5 +20,6 @@ public interface ContactRepository extends JpaRepository<Contact, Integer> {
             "            and a.blacklisted = ?2\n" +
             "            and a.deleted = false\n" +
             "            order by a.last_modified DESC", nativeQuery = true)
-    Page<ContactOM> filterContact(String input, boolean blacklisted, Pageable pageable);
+//    Page<ContactOM> filterContact(String input, boolean blacklisted, Pageable pageable);
+    List<ContactOM> filterContact(String input, boolean blacklisted);
 }

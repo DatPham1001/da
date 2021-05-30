@@ -9,7 +9,7 @@ public interface ContactOM {
 
     String getPhone();
 
-    Date getMeetDate();
+    String getMeetDate();
 
     String getEmail();
 
@@ -21,7 +21,7 @@ public interface ContactOM {
 
     Integer getJobId();
 
-    Integer getExperience();
+    String getExperience();
 
     String getCvUrl();
 
