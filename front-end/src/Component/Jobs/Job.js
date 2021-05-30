@@ -35,7 +35,7 @@ import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import { Alert, Button, Menu, MenuItem, Snackbar, TextField } from '@material-ui/core';
+import { Alert, Button, Collapse, Grow, Menu, MenuItem, Snackbar, TextField } from '@material-ui/core';
 import MailIcon from '@material-ui/icons/Mail';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -177,107 +177,147 @@ export default function Job(props) {
     const classes = useStyles();
     const tableRef = React.createRef();
     const history = useHistory();
+    const [alertCreated, setalertCreated] = useState(false);
+    const [open, setOpen] = React.useState(false);
+
+    const [checked, setchecked] = useState(true)
+    const [tableGrid, settableGrid] = useState(12)
+    const [tableGrid2, settableGrid2] = useState(8)
+    const handleClickOpen = (e) => {
+        settableGrid2(tableGrid)
+        settableGrid(tableGrid2)
+        setchecked((prev) => !prev);
+    };
     return (
         <div className={classes.root}>
             <MenuBar title="Quản lý vị trí công việc"></MenuBar>
-
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
                 <Container maxWidth="lg" className={classes.container}>
-                <MaterialTable
-                        title="Danh sách ứng viên"
-                        icons={tableIcons}
-                        tableRef={tableRef}
-                        columns={[
-                            {
-                                title: 'STT', field: "stt", width: '2%',
-                                headerStyle: {
-                                    textAlign: 'center',
-                                    paddingLeft: 40,
-                                },
-                                cellStyle: {
-                                    textAlign: 'center'
-                                },
-                            },
-                            {
-                                title: 'Vị trí', width: '17%', field: 'name',
-                                headerStyle: {
-                                    paddingLeft: 20,
-                                },
-                                cellStyle: {
-                                    paddingLeft: 22,
-                                },
-                            },
-                            {
-                                title: 'Mô tả', field: 'description',
-                                headerStyle: {
-                                    paddingLeft: 20,
-                                },
-                                cellStyle: {
-                                    paddingLeft: 22,
-                                },
-                            },
-                            {
-                                title: 'Trạng thái', field: 'recuitmentStatus',
-                                headerStyle: {
-                                    paddingLeft: 20,
-                                },
-                                cellStyle: {
-                                    paddingLeft: 22,
-                                },
-                            },
-                            {
-                                title: 'Ngày tạo', field: 'createdDate',
-                                headerStyle: {
-                                    paddingLeft: 20,
-                                },
-                                cellStyle: {
-                                    paddingLeft: 22,
-                                },
-                            },
-                        ]}
-                        data={query =>
-                            new Promise((resolve, reject) => {
-                                let url = 'job' 
-                                // + query.search;
-                                axiosGet(Auth.token, url)
-                                    .then(result => {
-                                        console.log(result.data)
-                                        let datas = result.data.map((item, index) => {
-                                            let tmp = Object.assign({}, item,
-                                                { stt: (index + 1) },
-                                                { createdDate: (Moment(item.createdDate).format('DD-MM-YYYY')) },
-                                            );
-                                            return tmp;
-                                        })
-                                        resolve({
-                                            data: datas,
-                                            page: 0,
-                                            totalCount: result.data.length,
-                                        })
+                    <Snackbar open={alertCreated} autoHideDuration={1000}
+                        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                        onClose={() => setalertCreated(false)}
+                    >
+                        <Alert variant="filled" severity="success">
+                            Tạo ứng viên thành công!
+                        </Alert>
+
+                    </Snackbar>
+                    <Box display='flex' justifyContent='flex-end'>
+                        <Button
+                            className="product-btn"
+                            variant="contained"
+                            color="primary"
+                            style={{ marginBottom: 20 }}
+                            // onClick={() => history.push("/contact/create")}
+                            onClick={handleClickOpen}
+                        >
+                            Thêm mới
+                      </Button>
+                    </Box>
+                    <Grid container>
+                        <Grid sm={tableGrid}>
+                            <MaterialTable
+                                title="Danh sách vị trí"
+                                icons={tableIcons}
+                                tableRef={tableRef}
+                                columns={[
+                                    {
+                                        title: 'STT', field: "stt", width: '2%',
+                                        headerStyle: {
+                                            textAlign: 'center',
+                                            paddingLeft: 40,
+                                        },
+                                        cellStyle: {
+                                            textAlign: 'center'
+                                        },
+                                    },
+                                    {
+                                        title: 'Vị trí', width: '17%', field: 'name',
+                                        headerStyle: {
+                                            paddingLeft: 20,
+                                        },
+                                        cellStyle: {
+                                            paddingLeft: 22,
+                                        },
+                                    },
+                                    {
+                                        title: 'Mô tả', field: 'description',
+                                        headerStyle: {
+                                            paddingLeft: 20,
+                                        },
+                                        cellStyle: {
+                                            paddingLeft: 22,
+                                        },
+                                    },
+                                    {
+                                        title: 'Trạng thái', field: 'recuitmentStatus',
+                                        headerStyle: {
+                                            paddingLeft: 20,
+                                        },
+                                        cellStyle: {
+                                            paddingLeft: 22,
+                                        },
+                                    },
+                                    {
+                                        title: 'Ngày tạo', field: 'createdDate',
+                                        headerStyle: {
+                                            paddingLeft: 20,
+                                        },
+                                        cellStyle: {
+                                            paddingLeft: 22,
+                                        },
+                                    },
+                                ]}
+                                data={query =>
+                                    new Promise((resolve, reject) => {
+                                        let url = 'job'
+                                        // + query.search;
+                                        axiosGet(Auth.token, url)
+                                            .then(result => {
+                                                console.log(result.data)
+                                                let datas = result.data.map((item, index) => {
+                                                    let tmp = Object.assign({}, item,
+                                                        { stt: (index + 1) },
+                                                        { createdDate: (Moment(item.createdDate).format('DD-MM-YYYY')) },
+                                                    );
+                                                    return tmp;
+                                                })
+                                                resolve({
+                                                    data: datas,
+                                                    page: 0,
+                                                    totalCount: result.data.length,
+                                                })
+                                            })
                                     })
-                            })
-                        } actions={[
-                            {
-                                icon: 'refresh',
-                                tooltip: 'Refresh Data',
-                                isFreeAction: true,
-                                onClick: () => tableRef.current && tableRef.current.onQueryChange(),
-                            }
-                        ]}
-                        onRowClick={((e, rowData) =>
-                            console.log(rowData.id)
-                        )}
-                        options={{
-                            debounceInterval: 500,
-                            // selection: true,
-                            headerStyle: { backgroundColor: '#a5c3f2' },
-                            cellStyle: {},
-                            rowStyle: {
-                                textAlign: 'left',
-                            },
-                        }}
-                    />
+                                } actions={[
+                                    {
+                                        icon: 'refresh',
+                                        tooltip: 'Refresh Data',
+                                        isFreeAction: true,
+                                        onClick: () => tableRef.current && tableRef.current.onQueryChange(),
+                                    }
+                                ]}
+                                onRowClick={((e, rowData) =>
+                                    console.log(rowData.id)
+                                )}
+                                options={{
+                                    debounceInterval: 500,
+                                    // selection: true,
+                                    headerStyle: { backgroundColor: '#a5c3f2' },
+                                    cellStyle: {},
+                                    rowStyle: {
+                                        textAlign: 'left',
+                                    },
+                                }}
+                            />
+
+                        </Grid>
+                        <Grid sm={4}>
+                            {!checked && <Paper elevation={4} className={classes.paper}>
+                                 </Paper>}
+                        </Grid>
+                    </Grid>
 
                     <Box pt={4}>
                         <Copyright />
