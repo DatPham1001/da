@@ -196,14 +196,14 @@ export default function Contact() {
         setSelectedDate(date);
         setcontact((prevState) => ({
             ...prevState,
-            bod: moment(date).format('DD-MM-YYYY')
+            bod: moment(date).format('YYYY-MM-DD')
         }));
     };
     const handleMeetDateChange = (date) => {
         setdatetime(date)
         setcontact((prevState) => ({
             ...prevState,
-            meetDate: moment(date).format('DD-MM-YYYY HH:mm:ss')
+            meetDate: moment(date).format('YYYY-MM-DD HH:mm:ss')
         }));
     };
     const [desOpen, setdesOpen] = useState(false);
@@ -211,6 +211,8 @@ export default function Contact() {
     const [contact, setcontact] = useState({ name: "", phone: "", email: "", address: "", bod: "", meetDate: "", jobId: "", experience: "", cvUrl: "" })
     const handleClose = () => {
         setOpen(false);
+        setdatetime(null)
+        setSelectedDate(null)
         setcontact({ name: "", phone: "", email: "", address: "", bod: "", meetDate: "", jobId: "", experience: "", cvUrl: "" })
         setfile({})
     };
@@ -250,8 +252,9 @@ export default function Contact() {
         );
     };
     const handleSubmit = () => {
-        axiosPost(Auth.token, "contact" , contact)
+        axiosPost(Auth.token, "contact", contact)
             .then((res) => {
+                handleClose()
                 setalertCreated(true)
                 setTimeout(() => {
                     history.push("/contacts");
@@ -278,8 +281,19 @@ export default function Contact() {
     const [importCvModel, setimportCvModel] = useState(false)
     const [sheetLink, setsheetLink] = useState("")
     const handleImportcv = () => {
-        setimportCvModel(false)
         console.log(sheetLink);
+        axiosPost(Auth.token, "contact/import", sheetLink)
+            .then((res) => {
+                setimportCvModel(false)
+                setsheetLink("");
+                setalertCreated(true)
+                setTimeout(() => {
+                    history.push("/contacts");
+                }, 1000);
+
+            }).catch((e) => {
+                console.log(e)
+            });
     }
     return (
         <div className={classes.root}>
@@ -326,9 +340,10 @@ export default function Contact() {
                                 title: 'STT', field: "stt", width: '2%',
                                 headerStyle: {
                                     textAlign: 'center',
-                                    paddingLeft: 40,
+                                    paddingLeft: 11,
                                 },
                                 cellStyle: {
+                                    paddingRight: 11,
                                     textAlign: 'center'
                                 },
                             },
@@ -406,7 +421,7 @@ export default function Contact() {
                                         console.log(result)
                                         let datas = result.data.map((item, index) => {
                                             let tmp = Object.assign({}, item,
-                                                { stt: ((result.data.number) * result.data.size + index + 1) },
+                                                { stt: (index + 1) },
                                                 { bod: (Moment(item.bod).format('DD-MM-YYYY')) },
                                                 { meetDate: (Moment(item.meetDate).format('DD-MM-YYYY HH:mm:ss')) }
                                             );
@@ -414,8 +429,8 @@ export default function Contact() {
                                         })
                                         resolve({
                                             data: datas,
-                                            page: result.data.totalPages - 1,
-                                            totalCount: result.data.totalElements,
+                                            page: 1,
+                                            totalCount: result.data.length,
                                         })
                                     })
                             })
