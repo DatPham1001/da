@@ -32,5 +32,6 @@ public class Contact extends BaseEntity {
     @Column(name = "blacklisted")
     public boolean blacklisted;
     public String note;
+    public String stage;
     public boolean deleted;
 }
