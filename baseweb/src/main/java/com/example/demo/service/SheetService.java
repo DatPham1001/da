@@ -99,6 +99,7 @@ public class SheetService {
                 contact.setMeetDate(row.get(7) + String.valueOf(row.get(8)));
                 contact.setNote(String.valueOf(row.get(9)));
                 contact.setExperience(String.valueOf(row.get(10)));
+//                contact.setStage(String.valueOf(row.get(11)));
                 contactRepository.save(contact);
             }
         }

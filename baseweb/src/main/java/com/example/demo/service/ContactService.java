@@ -81,7 +81,8 @@ public class ContactService {
         Optional<Job> job = jobRepository.findById(contact.get().getJobId());
 //        ContactDetailModel contactDetailModel = new ContactDetailModel();
         String json = gson.toJson(contact.get());
-        ContactDetailModel contactDetailModel = gson.fromJson(json, ContactDetailModel.class);
+        ContactDetailModel contactDetailModel = new ContactDetailModel();
+
         contactDetailModel.setJobName(job.get().getName());
         return contactDetailModel;
     }
