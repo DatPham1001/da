@@ -46,7 +46,7 @@ import BarChartIcon from '@material-ui/icons/BarChart';
 import WorkIcon from '@material-ui/icons/Work';
 import { useHistory } from 'react-router';
 import MenuBar from '../MenuBar';
-import { axiosGet, axiosPost } from '../../Api';
+import { axiosGet, axiosPost, axiosPut } from '../../Api';
 import Auth from '../../Auth';
 import MaterialTable from 'material-table';
 import "../Contact/Contact.css";
@@ -61,13 +61,17 @@ import Moment from 'moment';
 import { KeyboardDatePicker, KeyboardDateTimePicker, KeyboardTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { storage } from "../Contact/firebase"
 import { setDate } from 'date-fns';
+import DeleteIcon from '@material-ui/icons/Delete';
+import RefreshIcon from '@material-ui/icons/Refresh';
+import EditIcon from '@material-ui/icons/Edit';
+import AddBoxIcon from '@material-ui/icons/AddBox';
 function Copyright() {
     return (
         <Typography variant="body2" color="textSecondary" align="center">
             {'Copyright © '}
             <Link color="inherit" href="https://material-ui.com/">
                 DatPham - Thesis
-      </Link>{' '}
+            </Link>{' '}
             {new Date().getFullYear()}
             {'.'}
         </Typography>
@@ -188,6 +192,39 @@ export default function Job(props) {
         settableGrid(tableGrid2)
         setchecked((prev) => !prev);
     };
+    const [job, setjob] = useState({ name: "", description: "", recuitmentStatus: true,id : "" })
+    const handleCreateJob = (event) => {
+        setjob((prevState) => ({
+            ...prevState,
+            [event.target.id]: event.target.value
+        }));
+    }
+    const handleSubmit = () => {
+        console.log(job)
+        axiosPost(Auth.token, "job", job)
+            .then((res) => {
+                setalertCreated(true)
+                tableRef.current && tableRef.current.onQueryChange()
+            }).catch((e) => {
+                console.log(e)
+            });
+    }
+    const [openU, setOpenU] = React.useState(false);
+  
+    const handleCloseU = () => {
+      setOpenU(false);
+
+    };
+    const handleUpdate = ()=>{
+        console.log(job)
+        axiosPut(Auth.token, "job/" +job.id, job)
+            .then((res) => {
+                setalertCreated(true)
+                tableRef.current && tableRef.current.onQueryChange()
+            }).catch((e) => {
+                console.log(e)
+            });
+    }
     return (
         <div className={classes.root}>
             <MenuBar title="Quản lý vị trí công việc"></MenuBar>
@@ -199,7 +236,7 @@ export default function Job(props) {
                         onClose={() => setalertCreated(false)}
                     >
                         <Alert variant="filled" severity="success">
-                            Tạo ứng viên thành công!
+                            Tạo vị trí thành công!
                         </Alert>
 
                     </Snackbar>
@@ -213,9 +250,9 @@ export default function Job(props) {
                             onClick={handleClickOpen}
                         >
                             Thêm mới
-                      </Button>
+                        </Button>
                     </Box>
-                    <Grid container>
+                    <Grid container >
                         <Grid sm={tableGrid}>
                             <MaterialTable
                                 title="Danh sách vị trí"
@@ -290,17 +327,11 @@ export default function Job(props) {
                                                 })
                                             })
                                     })
-                                } actions={[
-                                    {
-                                        icon: 'refresh',
-                                        tooltip: 'Refresh Data',
-                                        isFreeAction: true,
-                                        onClick: () => tableRef.current && tableRef.current.onQueryChange(),
-                                    }
-                                ]}
+                                }
                                 onRowClick={((e, rowData) =>
                                     console.log(rowData.id)
                                 )}
+
                                 options={{
                                     debounceInterval: 500,
                                     // selection: true,
@@ -310,15 +341,143 @@ export default function Job(props) {
                                         textAlign: 'left',
                                     },
                                 }}
-                            />
+                                actions={[
+                                    {
+                                        icon: RefreshIcon,
+                                        tooltip: 'Refresh Data',
+                                        isFreeAction: true,
+                                        onClick: () => tableRef.current && tableRef.current.onQueryChange(),
+                                    },
+                                    {
+                                        icon: EditIcon,
+                                        tooltip: 'Sửa',
+                                        onClick: (event, rowData) => {
+                                            setjob(rowData)
+                                            setOpenU(true);
+                                        }
+                                    },
+                                    {
+                                        icon: DeleteIcon,
+                                        tooltip: 'Xóa',
+                                        onClick: (event, rowData) => {
+                                            console.log(rowData)
+                                        }
 
+                                    }
+                                ]}
+                            />
                         </Grid>
-                        <Grid sm={4}>
-                            {!checked && <Paper elevation={4} className={classes.paper}>
-                                 </Paper>}
+                        <Grid sm={4} spacing={4}>
+                            {!checked && <Paper style={{ marginLeft: 10 }} elevation={4} className={classes.paper}>
+                                <Typography gutterBottom variant="h5" component="h2">
+                                    Tạo vị trí mới
+                                </Typography>
+                                <TextField
+                                    error={false}
+                                    className="text-input"
+                                    id="name"
+                                    style={{ marginBottom: 20 }}
+                                    label="Tên vị trí"
+                                    size="small"
+                                    defaultValue={job.name}
+                                    required
+                                    onChange={(e) => handleCreateJob(e)}
+                                /> <TextField
+                                    error={false}
+                                    className="text-input"
+                                    id="description"
+                                    style={{ marginBottom: 20 }}
+                                    label="Mô tả "
+                                    size="small"
+                                    defaultValue={job.description}
+                                    required
+                                    onChange={(e) => handleCreateJob(e)}
+                                />
+                                <TextField
+                                    size="small"
+                                    id="recuitmentStatus"
+                                    style={{ marginBottom: 20 }}
+                                    className="text-input"
+                                    select
+                                    label="Trạng thái tuyển dụng"
+                                    required
+                                    defaultValue={job.recuitmentStatus}
+                                    onChange={(event) => {
+                                        setjob((prevState) => ({
+                                            ...prevState,
+                                            recuitmentStatus: event.target.value
+                                        }));
+                                    }}
+                                >
+                                    <MenuItem id="recuitmentStatus" value={false}>false</MenuItem>
+                                    <MenuItem id="recuitmentStatus" value={true}>true</MenuItem>
+
+                                </TextField>
+                                <Button onClick={handleSubmit} variant="contained" c color="primary" autoFocus>
+                                    Chấp nhận
+                                </Button>
+                            </Paper>}
                         </Grid>
                     </Grid>
+                    <Dialog
+                        open={openU}
+                        onClose={handleCloseU}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">{" Cập nhật vị trí"}</DialogTitle>
+                        <DialogContent>
+                                <TextField
+                                    error={false}
+                                    className="text-input"
+                                    id="name"
+                                    style={{ marginBottom: 20 }}
+                                    label="Tên vị trí"
+                                    size="small"
+                                    defaultValue={job.name}
+                                    required
+                                    onChange={(e) => handleCreateJob(e)}
+                                /> <TextField
+                                    error={false}
+                                    className="text-input"
+                                    id="description"
+                                    style={{ marginBottom: 20 }}
+                                    label="Mô tả "
+                                    size="small"
+                                    defaultValue={job.description}
+                                    required
+                                    onChange={(e) => handleCreateJob(e)}
+                                />
+                                <TextField
+                                    size="small"
+                                    id="recuitmentStatus"
+                                    style={{ marginBottom: 20 }}
+                                    className="text-input"
+                                    select
+                                    label="Trạng thái tuyển dụng"
+                                    required
+                                    defaultValue={job.recuitmentStatus}
+                                    onChange={(event) => {
+                                        setjob((prevState) => ({
+                                            ...prevState,
+                                            recuitmentStatus: event.target.value
+                                        }));
+                                    }}
+                                >
+                                    <MenuItem id="recuitmentStatus" value={false}>false</MenuItem>
+                                    <MenuItem id="recuitmentStatus" value={true}>true</MenuItem>
 
+                                </TextField>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleCloseU} variant="contained" color="secondary">
+                                Hủy
+                            </Button>
+                            <Button onClick={handleUpdate} variant="contained" c color="primary" autoFocus>
+                                Chấp nhận
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
                     <Box pt={4}>
                         <Copyright />
                     </Box>

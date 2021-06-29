@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = "http://192.168.1.237:8081/api/"
+const baseURL = "http://192.168.1.8:8081/api/"
 export const axiosPost = (token, url, data) => {
     return axios.post(baseURL + url, data, {
         headers: {

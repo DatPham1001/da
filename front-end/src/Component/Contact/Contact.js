@@ -62,6 +62,8 @@ import { KeyboardDatePicker, KeyboardDateTimePicker, KeyboardTimePicker, MuiPick
 import { storage } from "../Contact/firebase"
 import { setDate } from 'date-fns';
 import ContactDetail from './ContactDetail';
+
+import RefreshIcon from '@material-ui/icons/Refresh'; 
 function Copyright() {
     return (
         <Typography variant="body2" color="textSecondary" align="center">
@@ -257,7 +259,7 @@ export default function Contact() {
                 handleClose()
                 setalertCreated(true)
                 setTimeout(() => {
-                    history.push("/contacts");
+                    tableRef.current && tableRef.current.onQueryChange()
                 }, 1000);
 
             }).catch((e) => {
@@ -287,9 +289,7 @@ export default function Contact() {
                 setimportCvModel(false)
                 setsheetLink("");
                 setalertCreated(true)
-                setTimeout(() => {
-                    history.push("/contacts");
-                }, 1000);
+                tableRef.current && tableRef.current.onQueryChange()
 
             }).catch((e) => {
                 console.log(e)
@@ -436,7 +436,7 @@ export default function Contact() {
                             })
                         } actions={[
                             {
-                                icon: 'refresh',
+                                icon: RefreshIcon,
                                 tooltip: 'Refresh Data',
                                 isFreeAction: true,
                                 onClick: () => tableRef.current && tableRef.current.onQueryChange(),

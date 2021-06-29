@@ -59,6 +59,8 @@ import Moment from 'moment';
 import { KeyboardDatePicker, KeyboardDateTimePicker, KeyboardTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { storage } from "../Contact/firebase"
 import { setDate } from 'date-fns';
+
+import RefreshIcon from '@material-ui/icons/Refresh';
 function Copyright() {
     return (
         <Typography variant="body2" color="textSecondary" align="center">
@@ -236,12 +238,12 @@ export default function Account(props) {
                         ]}
                         data={query =>
                             new Promise((resolve, reject) => {
-                                let url = 'accounts' 
+                                let url = 'account' 
                                 // + query.search;
                                 axiosGet(Auth.token, url)
                                     .then(result => {
                                         console.log(result.data)
-                                        let datas = result.data.map((item, index) => {
+                                        let datas = result.data.content.map((item, index) => {
                                             let tmp = Object.assign({}, item,
                                                 { stt: (index + 1) },
                                                 { createdDate: (Moment(item.createdDate).format('DD-MM-YYYY')) },
@@ -257,7 +259,7 @@ export default function Account(props) {
                             })
                         } actions={[
                             {
-                                icon: 'refresh',
+                                icon: RefreshIcon,
                                 tooltip: 'Refresh Data',
                                 isFreeAction: true,
                                 onClick: () => tableRef.current && tableRef.current.onQueryChange(),
