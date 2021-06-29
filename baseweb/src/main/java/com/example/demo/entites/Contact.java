@@ -34,4 +34,5 @@ public class Contact extends BaseEntity {
     public String note;
     public String stage;
     public boolean deleted;
+    public String progress;
 }
