@@ -33,4 +33,5 @@ public class Contact extends BaseEntity {
     public boolean blacklisted;
     public String note;
     public boolean deleted;
+    public String progress;
 }
