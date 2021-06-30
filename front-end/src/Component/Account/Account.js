@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useState } from 'react'
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
 import Check from '@material-ui/icons/Check';
@@ -67,7 +67,7 @@ function Copyright() {
             {'Copyright © '}
             <Link color="inherit" href="https://material-ui.com/">
                 DatPham - Thesis
-      </Link>{' '}
+            </Link>{' '}
             {new Date().getFullYear()}
             {'.'}
         </Typography>
@@ -177,6 +177,26 @@ export default function Account(props) {
     const classes = useStyles();
     const tableRef = React.createRef();
     const history = useHistory();
+    const [open, setOpen] = React.useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+        setaccount({ name: "", description: "", username: "", password: "" })
+    };
+    const handleCreateAccount = (event) => {
+        setaccount((prevState) => ({
+            ...prevState,
+            [event.target.id]: event.target.value
+        }));
+    }
+    const [account, setaccount] = useState({ name: "", description: "", username: "", password: "" })
+    const handleSubmit = () => {
+        console.log(account);
+    }
     return (
         <div className={classes.root}>
             <MenuBar title="Quản lý tài khoản"></MenuBar>
@@ -184,7 +204,19 @@ export default function Account(props) {
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
                 <Container maxWidth="md" className={classes.container}>
-                <MaterialTable
+                    <Box display='flex' justifyContent='flex-end'>
+                        <Button
+                            className="product-btn"
+                            variant="contained"
+                            color="primary"
+                            style={{ marginBottom: 20 }}
+                            // onClick={() => history.push("/contact/create")}
+                            onClick={handleClickOpen}
+                        >
+                            Thêm mới
+                        </Button>
+                    </Box>
+                    <MaterialTable
                         title="Danh sách tài khoản"
                         icons={tableIcons}
                         tableRef={tableRef}
@@ -238,7 +270,7 @@ export default function Account(props) {
                         ]}
                         data={query =>
                             new Promise((resolve, reject) => {
-                                let url = 'account' 
+                                let url = 'account'
                                 // + query.search;
                                 axiosGet(Auth.token, url)
                                     .then(result => {
@@ -279,6 +311,71 @@ export default function Account(props) {
                         }}
                     />
 
+                    <Dialog
+                        open={open}
+                        onClose={handleClose}
+                        aria-labelledby="alert-dialog-title"
+                        aria-describedby="alert-dialog-description"
+                    >
+                        <DialogTitle id="alert-dialog-title">{"Thêm mới tài khoản"}</DialogTitle>
+                        <DialogContent>
+                            <Typography gutterBottom variant="h5" component="h2">
+                                Thông tin
+                            </Typography>
+                            <TextField
+                                error={false}
+                                className="text-input"
+                                id="name"
+                                style={{ marginBottom: 20 }}
+                                label="Họ và tên"
+                                size="small"
+                                defaultValue=""
+                                required
+                                onChange={(e) => handleCreateAccount(e)}
+                            />
+                            <TextField
+                                error={false}
+                                className="text-input"
+                                id="username"
+                                style={{ marginBottom: 20 }}
+                                label="Tên tài khoản"
+                                size="small"
+                                defaultValue=""
+                                required
+                                onChange={(e) => handleCreateAccount(e)}
+                            />
+                            <TextField
+                                error={false}
+                                className="text-input"
+                                id="password"
+                                style={{ marginBottom: 20 }}
+                                label="Mật khẩu"
+                                size="small"
+                                defaultValue=""
+                                required
+                                onChange={(e) => handleCreateAccount(e)}
+                            />
+                            <TextField
+                                error={false}
+                                className="text-input"
+                                id="description"
+                                style={{ marginBottom: 20 }}
+                                label="Mô tả"
+                                size="small"
+                                defaultValue=""
+                                required
+                                onChange={(e) => handleCreateAccount(e)}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleClose} variant="contained" color="secondary">
+                                Hủy
+                            </Button>
+                            <Button onClick={handleSubmit} variant="contained" c color="primary" autoFocus>
+                                Chấp nhận
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
                     <Box pt={4}>
                         <Copyright />
                     </Box>

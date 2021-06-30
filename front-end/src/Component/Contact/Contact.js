@@ -63,14 +63,14 @@ import { storage } from "../Contact/firebase"
 import { setDate } from 'date-fns';
 import ContactDetail from './ContactDetail';
 
-import RefreshIcon from '@material-ui/icons/Refresh'; 
+import RefreshIcon from '@material-ui/icons/Refresh';
 function Copyright() {
     return (
         <Typography variant="body2" color="textSecondary" align="center">
             {'Copyright © '}
             <Link color="inherit" href="#">
                 DatPham - Thesis
-      </Link>{' '}
+            </Link>{' '}
             {new Date().getFullYear()}
             {'.'}
         </Typography>
@@ -210,7 +210,7 @@ export default function Contact() {
     };
     const [desOpen, setdesOpen] = useState(false);
     const [hideDes, sethideDes] = useState(true);
-    const [contact, setcontact] = useState({ name: "", phone: "", email: "", address: "", bod: "", meetDate: "", jobId: "", experience: "", cvUrl: "" })
+    const [contact, setcontact] = useState({ name: "", phone: "", email: "", address: "", bod: "", meetDate: "", jobId: "", experience: "", cvUrl: "", takecareStatus: "" })
     const handleClose = () => {
         setOpen(false);
         setdatetime(null)
@@ -307,7 +307,7 @@ export default function Contact() {
                     >
                         <Alert variant="filled" severity="success">
                             Tạo ứng viên thành công!
-                </Alert>
+                        </Alert>
                     </Snackbar>
                     <Box display='flex' justifyContent='flex-end'>
                         <Button
@@ -318,7 +318,7 @@ export default function Contact() {
                             onClick={() => setimportCvModel(true)}
                         >
                             Import ứng viên
-                      </Button>
+                        </Button>
                         <Button
                             className="product-btn"
                             variant="contained"
@@ -328,7 +328,7 @@ export default function Contact() {
                             onClick={handleClickOpen}
                         >
                             Thêm mới
-                      </Button>
+                        </Button>
                     </Box>
                     <ContactDetail open={contactDetailDialog} contactDetailCallback={contactDetailCallback} contactId={contactId}></ContactDetail>
                     <MaterialTable
@@ -537,6 +537,27 @@ export default function Contact() {
                                             }}
                                         />
                                     </MuiPickersUtilsProvider>
+                                    <TextField
+                                        size="small"
+                                        id="takecareStatus"
+                                        style={{ marginBottom: 20 }}
+                                        className="text-input"
+                                        select
+                                        label="Trạng thái"
+                                        required
+                                        onChange={(event) => {
+                                            setcontact((prevState) => ({
+                                                ...prevState,
+                                                takecareStatus: event.target.value
+                                            }));
+                                        }}
+                                    >
+                                        <MenuItem id="experience" value={"Chưa có kinh nghiệm"}>Chờ hẹn gặp</MenuItem>
+                                        <MenuItem id="experience" value={"1 năm"}>Đã phỏng vấn</MenuItem>
+                                        <MenuItem id="experience" value={"2 năm"}>Đạt</MenuItem>
+                                        <MenuItem id="experience" value={"3 năm"}>Không Đạt</MenuItem>
+
+                                    </TextField>
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
                                     <Typography gutterBottom variant="h5" component="h2">
@@ -673,7 +694,7 @@ export default function Contact() {
                         <DialogContent>
                             <DialogContentText id="alert-dialog-description">
                                 Lưu ý : Google worksheet cần được public link
-          </DialogContentText>
+                            </DialogContentText>
                             <TextField
                                 className="text-input"
                                 error={false}

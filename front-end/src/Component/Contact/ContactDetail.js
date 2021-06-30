@@ -13,7 +13,7 @@ function ContactDetail(props) {
     const handleClose = () => {
         props.contactDetailCallback();
         setisUpdate(false)
-        setcontact({ name: "", phone: "", email: "", address: "", bod: "", meetDate: "", jobId: "", experience: "", cvUrl: "" })
+        setcontactDetail({ name: "", phone: "", email: "", address: "", bod: "", meetDate: "", jobId: "", experience: "", cvUrl: "" ,status : "" })
         setfile({})
         console.log(props.contactId);
     };
@@ -107,22 +107,24 @@ function ContactDetail(props) {
         //     ...prevState,
         //     [event.target.id]: event.target.value
         // }));
-        axiosPut(Auth.token, "contact/" + contactDetail.id, contactDetail)
-            .then((res) => {
-                // setalertCreated(true)
-                setTimeout(() => {
-                    // history.push("/contacts");
-                }, 1000);
+        // axiosPut(Auth.token, "contact/" + contactDetail.id, contactDetail)
+        //     .then((res) => {
+        //         // setalertCreated(true)
 
-            }).catch((e) => {
-                console.log(e)
-            });
+        //         setTimeout(() => {
+        //             // history.push("/contacts");
+        //         }, 1000);
+
+        //     }).catch((e) => {
+        //         console.log(e)
+        //     });
     }
     return (
-        <div>
+        <div >
             <Dialog open={props.open} onClose={handleClose} aria-labelledby="form-dialog-title"
                 fullWidth={true}
-                maxWidth={'lg'}>
+                maxWidth={'lg'}
+                style={{padding:50}}>
                 <Box display='flex' justifyContent='flex-end'>
                     <Tooltip title="Close " arrow>
                         <IconButton onClick={() => handleClose()} style=
@@ -164,7 +166,7 @@ function ContactDetail(props) {
                                         Kinh nghiệm : {contactDetail.experience}
                                     </div>
                                     <div className="product-detail">
-                                        Link cv : {contactDetail.cvUrl}
+                                        Link cv : <a href={contactDetail.cvUrl}>link cv</a>
                                     </div>
                                 </Grid>
 
@@ -261,6 +263,28 @@ function ContactDetail(props) {
                                         }}
                                     />
                                 </MuiPickersUtilsProvider>
+                                <TextField
+                                        size="small"
+                                        id="status"
+                                        style={{ marginBottom: 20 }}
+                                        className="text-input"
+                                        select
+                                        label="Trạng thái"
+                                        required
+                                        defaultValue={contactDetail.status}
+                                        onChange={(event) => {
+                                            setcontactDetail((prevState) => ({
+                                                ...prevState,
+                                                status: event.target.value
+                                            }));
+                                        }}
+                                    >
+                                        <MenuItem id="experience" value={"Chưa có kinh nghiệm"}>Chờ hẹn gặp</MenuItem>
+                                        <MenuItem id="experience" value={"1 năm"}>Đã phỏng vấn</MenuItem>
+                                        <MenuItem id="experience" value={"2 năm"}>Đạt</MenuItem>
+                                        <MenuItem id="experience" value={"3 năm"}>Không Đạt</MenuItem>
+
+                                    </TextField>
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <Typography gutterBottom variant="h5" component="h2">
@@ -295,10 +319,11 @@ function ContactDetail(props) {
                                     style={{ marginBottom: 2 }}
                                     className="text-input"
                                     select
-                                    defaultValue={contactDetail.jobId}
+                                    defaultValue={contactDetail.jobName}
                                     label="Vị trí ứng tuyển"
                                     onChange={(event) => {
-                                        setcontact((prevState) => ({
+                                        console.log(event.target.value)
+                                        setcontactDetail((prevState) => ({
                                             ...prevState,
                                             jobId: event.target.value
                                         }));
