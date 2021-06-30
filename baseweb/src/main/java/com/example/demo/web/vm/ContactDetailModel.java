@@ -17,10 +17,11 @@ public class ContactDetailModel {
     public int jobId;
     public String experience;
     public String cvUrl;
-    public Date meetDate;
+    public String meetDate;
     public Integer responsibleBy;
     public boolean blacklisted;
     public String note;
     public boolean deleted;
     public String jobName;
+    public String status;
 }

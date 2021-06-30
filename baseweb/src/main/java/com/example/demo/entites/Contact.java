@@ -19,6 +19,7 @@ public class Contact extends BaseEntity {
     public String phone;
     public String email;
     public String address;
+    @Temporal(TemporalType.TIMESTAMP)
     public Date bod;
     @Column(name = "job_id")
     public int jobId;
@@ -34,5 +35,6 @@ public class Contact extends BaseEntity {
     public String note;
     public String stage;
     public boolean deleted;
-    public String progress;
+    @Column(name = "takecare_status")
+    public String takeCareStatus;
 }

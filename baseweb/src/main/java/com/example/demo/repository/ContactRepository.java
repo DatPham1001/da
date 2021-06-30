@@ -13,7 +13,8 @@ import java.util.List;
 
 @Repository
 public interface ContactRepository extends JpaRepository<Contact, Integer> {
-    @Query(value = "SELECT a.id,a.meet_date meetDate,a.name,phone,email,address,bod,job_id as job_id,j.name as jobName,experience,cv_url as cvUrl,responsible_by as responsibleBy\n" +
+    @Query(value = "SELECT a.id,a.meet_date meetDate,a.name,phone,email,address,bod,job_id as job_id," +
+            "j.name as jobName,experience,cv_url as cvUrl,responsible_by as responsibleBy,a.note as note\n" +
             " FROM contact a left join job j on a.job_id = j.id\n" +
             "            where a.name like concat('%',upper(?1),'%')\n" +
             "            or a.phone like concat('%',upper(?1),'%')\n" +

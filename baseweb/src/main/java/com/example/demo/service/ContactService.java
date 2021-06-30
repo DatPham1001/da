@@ -12,12 +12,10 @@ import com.example.demo.web.vm.CreateContactIM;
 import com.google.gson.Gson;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ContactService {
@@ -45,6 +43,7 @@ public class ContactService {
         contact.setCvUrl(createContactIM.getCvUrl());
         contact.setNote(createContactIM.getNote());
         contact.setExperience(createContactIM.getExperience());
+        contact.setTakeCareStatus(createContactIM.getTakecareStatus());
         contactRepository.save(contact);
         return contact;
     }
@@ -77,13 +76,26 @@ public class ContactService {
     }
 
     public ContactDetailModel getByID(int id) {
-        Optional<Contact> contact = contactRepository.findById(id);
-        Optional<Job> job = jobRepository.findById(contact.get().getJobId());
+        Contact contact = contactRepository.findById(id).get();
+        Job job = jobRepository.getOne(contact.getJobId());
+        SimpleDateFormat dateFormat = new SimpleDateFormat();
 //        ContactDetailModel contactDetailModel = new ContactDetailModel();
-        String json = gson.toJson(contact.get());
         ContactDetailModel contactDetailModel = new ContactDetailModel();
-
-        contactDetailModel.setJobName(job.get().getName());
+        if (job.getName() == null || job.getName().isEmpty())
+            contactDetailModel.setJobName("None");
+        else contactDetailModel.setJobName(job.getName());
+        contactDetailModel.setAddress(contact.getAddress());
+        contactDetailModel.setId(contact.getId());
+        contactDetailModel.setName(contact.getName());
+        contactDetailModel.setPhone(contact.getPhone());
+        contactDetailModel.setEmail(contact.getEmail());
+        contactDetailModel.setExperience(contact.getExperience());
+        contactDetailModel.setCvUrl(contact.getCvUrl());
+//        contactDetailModel.setResponsibleBy();
+        contactDetailModel.setNote(contact.getNote());
+        contactDetailModel.setMeetDate(contact.getMeetDate());
+        contactDetailModel.setBod(contact.getBod());
+        contactDetailModel.setStatus(contact.getTakeCareStatus());
         return contactDetailModel;
     }
 

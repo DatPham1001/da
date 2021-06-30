@@ -26,5 +26,7 @@ public interface ContactOM {
     String getCvUrl();
 
     Integer getResponsibleBy();
+    String getNote();
+
 
 }

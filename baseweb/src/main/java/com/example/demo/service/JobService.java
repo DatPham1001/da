@@ -34,7 +34,7 @@ public class JobService {
     }
 
     public List<Job> getAll() {
-        return jobRepository.findAll();
+        return jobRepository.findAllByRecuitmentStatus(true);
     }
 
     public Job getID(int id) {
