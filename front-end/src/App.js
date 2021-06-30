@@ -14,14 +14,14 @@ function App() {
     <BrowserRouter>
       <Switch>
         <Route exact path="/login" component={Login}></Route> 
-        {/* <ProtectedRoute exact path="/" component={Dashboard}></ProtectedRoute>
+        <ProtectedRoute exact path="/" component={Dashboard}></ProtectedRoute>
         <ProtectedRoute exact path="/contacts" component={Contact}></ProtectedRoute>
         <ProtectedRoute exact path="/jobs" component={Job}></ProtectedRoute>
-        <ProtectedRoute exact path="/accounts" component={Account}></ProtectedRoute> */}
-         <Route exact path="/" component={Dashboard}></Route>
-        <Route exact path="/contacts" component={Contact}></Route>
+        <ProtectedRoute exact path="/accounts" component={Account}></ProtectedRoute>
+         {/* <Route exact path="/" component={Dashboard}></Route> */}
+        {/* <Route exact path="/contacts" component={Contact}></Route>
         <Route exact path="/jobs" component={Job}></Route>
-        <Route exact path="/accounts" component={Account}></Route>
+        <Route exact path="/accounts" component={Account}></Route> */}
       </Switch>
 
     </BrowserRouter>
