@@ -44,7 +44,7 @@ import BarChartIcon from '@material-ui/icons/BarChart';
 import WorkIcon from '@material-ui/icons/Work';
 import { useHistory } from 'react-router';
 import MenuBar from '../MenuBar';
-import { axiosGet, axiosPost } from '../../Api';
+import { axiosDelete, axiosGet, axiosPost, axiosPostLogin } from '../../Api';
 import Auth from '../../Auth';
 import MaterialTable from 'material-table';
 import "../Contact/Contact.css";
@@ -60,6 +60,7 @@ import { KeyboardDatePicker, KeyboardDateTimePicker, KeyboardTimePicker, MuiPick
 import { storage } from "../Contact/firebase"
 import { setDate } from 'date-fns';
 
+import DeleteIcon from '@material-ui/icons/Delete';
 import RefreshIcon from '@material-ui/icons/Refresh';
 function Copyright() {
     return (
@@ -185,7 +186,7 @@ export default function Account(props) {
 
     const handleClose = () => {
         setOpen(false);
-        setaccount({ name: "", description: "", username: "", password: "" })
+        setaccount({ name: "", accountType: "", username: "", password: "", phone: "", address: "" })
     };
     const handleCreateAccount = (event) => {
         setaccount((prevState) => ({
@@ -193,9 +194,27 @@ export default function Account(props) {
             [event.target.id]: event.target.value
         }));
     }
-    const [account, setaccount] = useState({ name: "", description: "", username: "", password: "" })
+    const [alertCreated, setalertCreated] = useState(false);
+    const [alertDeleted, setalertDeleted] = useState(false);
+    const [alertFailed, setalertFailed] = useState(false)
+    const [account, setaccount] = useState({ name: "", accountType: "", username: "", password: "", phone: "", address: "" })
     const handleSubmit = () => {
         console.log(account);
+        axiosPost(Auth.token, "account", account)
+            .then((res) => {
+                console.log(res)
+                if (res.status == 400) {
+                    setalertFailed(true)
+                } else {
+                    tableRef.current && tableRef.current.onQueryChange()
+                    handleClose()
+                    setalertCreated(true)
+
+                }
+            }).catch((e) => {
+                setalertFailed(true)
+
+            });
     }
     return (
         <div className={classes.root}>
@@ -203,6 +222,30 @@ export default function Account(props) {
 
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
+                <Snackbar open={alertCreated} autoHideDuration={2000}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                    onClose={() => setalertCreated(false)}
+                >
+                    <Alert variant="filled" severity="success">
+                        Tạo tài khoản thành công!
+                    </Alert>
+                </Snackbar>
+                <Snackbar open={alertDeleted} autoHideDuration={2000}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                    onClose={() => setalertDeleted(false)}
+                >
+                    <Alert variant="filled" severity="success">
+                        Xóa tài khoản thành công!
+                    </Alert>
+                </Snackbar>
+                <Snackbar open={alertFailed} autoHideDuration={2000}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                    onClose={() => setalertFailed(false)}
+                >
+                    <Alert variant="filled" severity="error">
+                        Username đã tồn tại!
+                    </Alert>
+                </Snackbar>
                 <Container maxWidth="md" className={classes.container}>
                     <Box display='flex' justifyContent='flex-end'>
                         <Button
@@ -241,7 +284,16 @@ export default function Account(props) {
                                 },
                             },
                             {
-                                title: 'Chức vụ', field: 'description',
+                                title: 'Số điện thoại', field: 'phone',
+                                headerStyle: {
+                                    paddingLeft: 20,
+                                },
+                                cellStyle: {
+                                    paddingLeft: 22,
+                                },
+                            },
+                            {
+                                title: 'Loại tài khoản', field: 'accountType',
                                 headerStyle: {
                                     paddingLeft: 20,
                                 },
@@ -295,6 +347,19 @@ export default function Account(props) {
                                 tooltip: 'Refresh Data',
                                 isFreeAction: true,
                                 onClick: () => tableRef.current && tableRef.current.onQueryChange(),
+                            },
+                            {
+                                icon: DeleteIcon,
+                                tooltip: 'Xóa',
+                                onClick: (event, rowData) => {
+                                    axiosDelete(Auth.token, "account/" + rowData.id)
+                                        .then((res) => {
+                                            tableRef.current && tableRef.current.onQueryChange()
+                                            setalertDeleted(true)
+                                        }).catch((e) => {
+                                            console.log(e)
+                                        });
+                                }
                             }
                         ]}
                         onRowClick={((e, rowData) =>
@@ -316,56 +381,94 @@ export default function Account(props) {
                         onClose={handleClose}
                         aria-labelledby="alert-dialog-title"
                         aria-describedby="alert-dialog-description"
+                        maxWidth={'lg'}
                     >
                         <DialogTitle id="alert-dialog-title">{"Thêm mới tài khoản"}</DialogTitle>
                         <DialogContent>
                             <Typography gutterBottom variant="h5" component="h2">
                                 Thông tin
                             </Typography>
-                            <TextField
-                                error={false}
-                                className="text-input"
-                                id="name"
-                                style={{ marginBottom: 20 }}
-                                label="Họ và tên"
-                                size="small"
-                                defaultValue=""
-                                required
-                                onChange={(e) => handleCreateAccount(e)}
-                            />
-                            <TextField
-                                error={false}
-                                className="text-input"
-                                id="username"
-                                style={{ marginBottom: 20 }}
-                                label="Tên tài khoản"
-                                size="small"
-                                defaultValue=""
-                                required
-                                onChange={(e) => handleCreateAccount(e)}
-                            />
-                            <TextField
-                                error={false}
-                                className="text-input"
-                                id="password"
-                                style={{ marginBottom: 20 }}
-                                label="Mật khẩu"
-                                size="small"
-                                defaultValue=""
-                                required
-                                onChange={(e) => handleCreateAccount(e)}
-                            />
-                            <TextField
-                                error={false}
-                                className="text-input"
-                                id="description"
-                                style={{ marginBottom: 20 }}
-                                label="Mô tả"
-                                size="small"
-                                defaultValue=""
-                                required
-                                onChange={(e) => handleCreateAccount(e)}
-                            />
+                            <Grid container spacing={3}>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        error={false}
+                                        className="text-input"
+                                        id="name"
+                                        style={{ marginBottom: 20 }}
+                                        label="Họ và tên"
+                                        size="small"
+                                        defaultValue=""
+                                        required
+                                        onChange={(e) => handleCreateAccount(e)}
+                                    />
+                                    <TextField
+                                        error={false}
+                                        className="text-input"
+                                        id="phone"
+                                        style={{ marginBottom: 20 }}
+                                        label="Số điện thoại"
+                                        size="small"
+                                        defaultValue=""
+                                        required
+                                        onChange={(e) => handleCreateAccount(e)}
+                                    />
+                                    <TextField
+                                        error={false}
+                                        className="text-input"
+                                        id="description"
+                                        style={{ marginBottom: 20 }}
+                                        label="Mô tả"
+                                        size="small"
+                                        defaultValue=""
+                                        required
+                                        onChange={(e) => handleCreateAccount(e)}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6}>
+                                    <TextField
+                                        error={false}
+                                        className="text-input"
+                                        id="username"
+                                        style={{ marginBottom: 20 }}
+                                        label="Tên tài khoản"
+                                        size="small"
+                                        defaultValue=""
+                                        required
+                                        onChange={(e) => handleCreateAccount(e)}
+                                    />
+                                    <TextField
+                                        error={false}
+                                        className="text-input"
+                                        id="password"
+                                        style={{ marginBottom: 20 }}
+                                        label="Mật khẩu"
+                                        size="small"
+                                        defaultValue=""
+                                        required
+                                        onChange={(e) => handleCreateAccount(e)}
+                                    />
+                                    <TextField
+                                        size="small"
+                                        id="accountType"
+                                        style={{ marginBottom: 20 }}
+                                        className="text-input"
+                                        select
+                                        label="Loại tài khoản"
+                                        required
+                                        onChange={(event) => {
+                                            setaccount((prevState) => ({
+                                                ...prevState,
+                                                accountType: event.target.value
+                                            }));
+                                        }}
+                                    >
+                                        <MenuItem id="experience" value={"ROLE_ADMIN"}>ROLE_ADMIN</MenuItem>
+                                        <MenuItem id="experience" value={"EMPLOYEE"}>EMPLOYEE</MenuItem>
+
+
+                                    </TextField>
+                                </Grid>
+                            </Grid>
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={handleClose} variant="contained" color="secondary">

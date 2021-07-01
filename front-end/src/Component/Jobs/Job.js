@@ -46,7 +46,7 @@ import BarChartIcon from '@material-ui/icons/BarChart';
 import WorkIcon from '@material-ui/icons/Work';
 import { useHistory } from 'react-router';
 import MenuBar from '../MenuBar';
-import { axiosGet, axiosPost, axiosPut } from '../../Api';
+import { axiosDelete, axiosGet, axiosPost, axiosPut } from '../../Api';
 import Auth from '../../Auth';
 import MaterialTable from 'material-table';
 import "../Contact/Contact.css";
@@ -192,7 +192,7 @@ export default function Job(props) {
         settableGrid(tableGrid2)
         setchecked((prev) => !prev);
     };
-    const [job, setjob] = useState({ name: "", description: "", recuitmentStatus: true,id : "" })
+    const [job, setjob] = useState({ name: "", description: "", recuitmentStatus: true, id: "" })
     const handleCreateJob = (event) => {
         setjob((prevState) => ({
             ...prevState,
@@ -203,21 +203,22 @@ export default function Job(props) {
         console.log(job)
         axiosPost(Auth.token, "job", job)
             .then((res) => {
-                setalertCreated(true)
-                tableRef.current && tableRef.current.onQueryChange()
+                tableRef.current && tableRef.current.onQueryChange();
+                setalertCreated(true);
+
             }).catch((e) => {
                 console.log(e)
             });
     }
     const [openU, setOpenU] = React.useState(false);
-  
+
     const handleCloseU = () => {
-      setOpenU(false);
+        setOpenU(false);
 
     };
-    const handleUpdate = ()=>{
+    const handleUpdate = () => {
         console.log(job)
-        axiosPut(Auth.token, "job/" +job.id, job)
+        axiosPut(Auth.token, "job/" + job.id, job)
             .then((res) => {
                 setalertCreated(true)
                 tableRef.current && tableRef.current.onQueryChange()
@@ -356,14 +357,20 @@ export default function Job(props) {
                                             setOpenU(true);
                                         }
                                     },
-                                    {
-                                        icon: DeleteIcon,
-                                        tooltip: 'Xóa',
-                                        onClick: (event, rowData) => {
-                                            console.log(rowData)
-                                        }
+                                    // {
+                                    //     icon: DeleteIcon,
+                                    //     tooltip: 'Xóa',
+                                    //     onClick: (event, rowData) => {
+                                    //         console.log(rowData)
+                                    //         axiosDelete(Auth.token, "job/"+rowData.id)
+                                    //         .then((res) => {
+                                    //             tableRef.current && tableRef.current.onQueryChange()
+                                    //         }).catch((e) => {
+                                    //             console.log(e)
+                                    //         });
+                                    //     }
 
-                                    }
+                                    // }
                                 ]}
                             />
                         </Grid>
@@ -427,47 +434,47 @@ export default function Job(props) {
                     >
                         <DialogTitle id="alert-dialog-title">{" Cập nhật vị trí"}</DialogTitle>
                         <DialogContent>
-                                <TextField
-                                    error={false}
-                                    className="text-input"
-                                    id="name"
-                                    style={{ marginBottom: 20 }}
-                                    label="Tên vị trí"
-                                    size="small"
-                                    defaultValue={job.name}
-                                    required
-                                    onChange={(e) => handleCreateJob(e)}
-                                /> <TextField
-                                    error={false}
-                                    className="text-input"
-                                    id="description"
-                                    style={{ marginBottom: 20 }}
-                                    label="Mô tả "
-                                    size="small"
-                                    defaultValue={job.description}
-                                    required
-                                    onChange={(e) => handleCreateJob(e)}
-                                />
-                                <TextField
-                                    size="small"
-                                    id="recuitmentStatus"
-                                    style={{ marginBottom: 20 }}
-                                    className="text-input"
-                                    select
-                                    label="Trạng thái tuyển dụng"
-                                    required
-                                    defaultValue={job.recuitmentStatus}
-                                    onChange={(event) => {
-                                        setjob((prevState) => ({
-                                            ...prevState,
-                                            recuitmentStatus: event.target.value
-                                        }));
-                                    }}
-                                >
-                                    <MenuItem id="recuitmentStatus" value={false}>false</MenuItem>
-                                    <MenuItem id="recuitmentStatus" value={true}>true</MenuItem>
+                            <TextField
+                                error={false}
+                                className="text-input"
+                                id="name"
+                                style={{ marginBottom: 20 }}
+                                label="Tên vị trí"
+                                size="small"
+                                defaultValue={job.name}
+                                required
+                                onChange={(e) => handleCreateJob(e)}
+                            /> <TextField
+                                error={false}
+                                className="text-input"
+                                id="description"
+                                style={{ marginBottom: 20 }}
+                                label="Mô tả "
+                                size="small"
+                                defaultValue={job.description}
+                                required
+                                onChange={(e) => handleCreateJob(e)}
+                            />
+                            <TextField
+                                size="small"
+                                id="recuitmentStatus"
+                                style={{ marginBottom: 20 }}
+                                className="text-input"
+                                select
+                                label="Trạng thái tuyển dụng"
+                                required
+                                defaultValue={job.recuitmentStatus}
+                                onChange={(event) => {
+                                    setjob((prevState) => ({
+                                        ...prevState,
+                                        recuitmentStatus: event.target.value
+                                    }));
+                                }}
+                            >
+                                <MenuItem id="recuitmentStatus" value={false}>false</MenuItem>
+                                <MenuItem id="recuitmentStatus" value={true}>true</MenuItem>
 
-                                </TextField>
+                            </TextField>
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={handleCloseU} variant="contained" color="secondary">

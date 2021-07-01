@@ -149,7 +149,7 @@ export default function MenuBar(props) {
     const handleLogout = () => {
         setAnchorEl(null);
         Auth.logout();
-        history.push("/");
+        history.push("/login");
     };
     const renderMenu = (
         <Menu

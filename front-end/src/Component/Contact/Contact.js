@@ -256,11 +256,9 @@ export default function Contact() {
     const handleSubmit = () => {
         axiosPost(Auth.token, "contact", contact)
             .then((res) => {
+                tableRef.current && tableRef.current.onQueryChange()
                 handleClose()
                 setalertCreated(true)
-                setTimeout(() => {
-                    tableRef.current && tableRef.current.onQueryChange()
-                }, 1000);
 
             }).catch((e) => {
                 console.log(e)
@@ -286,11 +284,10 @@ export default function Contact() {
         console.log(sheetLink);
         axiosPost(Auth.token, "contact/import", sheetLink)
             .then((res) => {
+                tableRef.current && tableRef.current.onQueryChange()
                 setimportCvModel(false)
                 setsheetLink("");
                 setalertCreated(true)
-                tableRef.current && tableRef.current.onQueryChange()
-
             }).catch((e) => {
                 console.log(e)
             });
@@ -422,8 +419,7 @@ export default function Contact() {
                                         let datas = result.data.map((item, index) => {
                                             let tmp = Object.assign({}, item,
                                                 { stt: (index + 1) },
-                                                { bod: (Moment(item.bod).format('DD-MM-YYYY')) },
-                                                { meetDate: (Moment(item.meetDate).format('DD-MM-YYYY HH:mm:ss')) }
+                                                { bod: (Moment(item.bod).format('DD-MM-YYYY')) }
                                             );
                                             return tmp;
                                         })

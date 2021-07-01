@@ -9,14 +9,16 @@ import CloseIcon from '@material-ui/icons/Close';
 import { KeyboardDatePicker, KeyboardDateTimePicker, KeyboardTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import { useHistory } from 'react-router';
 import DateFnsUtils from '@date-io/date-fns';
+import { Alert, Snackbar, } from '@material-ui/core';
 function ContactDetail(props) {
     const handleClose = () => {
         props.contactDetailCallback();
         setisUpdate(false)
-        setcontactDetail({ name: "", phone: "", email: "", address: "", bod: "", meetDate: "", jobId: "", experience: "", cvUrl: "" ,status : "" })
+        setcontactDetail({ name: "", phone: "", email: "", address: "", bod: "", meetDate: "", jobId: "", experience: "", cvUrl: "", status: "" })
         setfile({})
         console.log(props.contactId);
     };
+    const tableRef = React.createRef();
     const [contactDetail, setcontactDetail] = useState({})
     const [contactId, setcontactId] = useState()
     const [isUpdate, setisUpdate] = useState(false)
@@ -102,29 +104,31 @@ function ContactDetail(props) {
     const [file, setfile] = useState({});
     const handleSubmit = () => {
         console.log(contactDetail)
-        console.log(Auth.token);
-        // setcontact((prevState) => ({
-        //     ...prevState,
-        //     [event.target.id]: event.target.value
-        // }));
-        // axiosPut(Auth.token, "contact/" + contactDetail.id, contactDetail)
-        //     .then((res) => {
-        //         // setalertCreated(true)
+        // console.log(Auth.token);
+        axiosPut(Auth.token, "contact/" + contactDetail.id, contactDetail)
+            .then((res) => {
+                    tableRef.current && tableRef.current.onQueryChange()
+                setalertCreated(true)
 
-        //         setTimeout(() => {
-        //             // history.push("/contacts");
-        //         }, 1000);
 
-        //     }).catch((e) => {
-        //         console.log(e)
-        //     });
+            }).catch((e) => {
+                console.log(e)
+            });
     }
     return (
         <div >
+            <Snackbar open={alertCreated} autoHideDuration={1000}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                onClose={() => setalertCreated(false)}
+            >
+                <Alert variant="filled" severity="success">
+                    Tạo ứng viên thành công!
+                </Alert>
+            </Snackbar>
             <Dialog open={props.open} onClose={handleClose} aria-labelledby="form-dialog-title"
                 fullWidth={true}
                 maxWidth={'lg'}
-                style={{padding:50}}>
+                style={{ padding: 50 }}>
                 <Box display='flex' justifyContent='flex-end'>
                     <Tooltip title="Close " arrow>
                         <IconButton onClick={() => handleClose()} style=
@@ -143,7 +147,7 @@ function ContactDetail(props) {
                                 onClick={() => setisUpdate(true)}
                             >
                                 Cập nhật
-                      </Button>
+                            </Button>
                         </Box>}
 
                 </DialogTitle>
@@ -182,7 +186,7 @@ function ContactDetail(props) {
                                     </div>
                                     <div className="product-detail">
                                         Ghi chú :
-                </div>
+                                    </div>
                                     <div className="product-detail">
                                         {contactDetail.note}
                                     </div>
@@ -195,7 +199,7 @@ function ContactDetail(props) {
                             <Grid item xs={12} sm={6}>
                                 <Typography gutterBottom variant="h5" component="h2">
                                     Thông tin
-                           </Typography>
+                                </Typography>
                                 <TextField
                                     error={false}
                                     className="text-input"
@@ -264,32 +268,32 @@ function ContactDetail(props) {
                                     />
                                 </MuiPickersUtilsProvider>
                                 <TextField
-                                        size="small"
-                                        id="status"
-                                        style={{ marginBottom: 20 }}
-                                        className="text-input"
-                                        select
-                                        label="Trạng thái"
-                                        required
-                                        defaultValue={contactDetail.status}
-                                        onChange={(event) => {
-                                            setcontactDetail((prevState) => ({
-                                                ...prevState,
-                                                status: event.target.value
-                                            }));
-                                        }}
-                                    >
-                                        <MenuItem id="experience" value={"Chưa có kinh nghiệm"}>Chờ hẹn gặp</MenuItem>
-                                        <MenuItem id="experience" value={"1 năm"}>Đã phỏng vấn</MenuItem>
-                                        <MenuItem id="experience" value={"2 năm"}>Đạt</MenuItem>
-                                        <MenuItem id="experience" value={"3 năm"}>Không Đạt</MenuItem>
+                                    size="small"
+                                    id="status"
+                                    style={{ marginBottom: 20 }}
+                                    className="text-input"
+                                    select
+                                    label="Trạng thái"
+                                    required
+                                    defaultValue={contactDetail.status}
+                                    onChange={(event) => {
+                                        setcontactDetail((prevState) => ({
+                                            ...prevState,
+                                            status: event.target.value
+                                        }));
+                                    }}
+                                >
+                                    <MenuItem id="experience" value={"Chưa có kinh nghiệm"}>Chờ hẹn gặp</MenuItem>
+                                    <MenuItem id="experience" value={"1 năm"}>Đã phỏng vấn</MenuItem>
+                                    <MenuItem id="experience" value={"2 năm"}>Đạt</MenuItem>
+                                    <MenuItem id="experience" value={"3 năm"}>Không Đạt</MenuItem>
 
-                                    </TextField>
+                                </TextField>
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <Typography gutterBottom variant="h5" component="h2">
                                     Chuyên môn
-                           </Typography>
+                                </Typography>
                                 <TextField
                                     size="small"
                                     id="experience"
@@ -374,7 +378,7 @@ function ContactDetail(props) {
                                     component="label"
                                 >
                                     Tải cv lên
-                               <input
+                                    <input
                                         type="file"
                                         accept="application/pdf"
                                         style={{ display: "none" }}
@@ -410,13 +414,13 @@ function ContactDetail(props) {
                 <DialogActions>
                     {isUpdate &&
                         <div>
-                            <Button onClick={() => setisUpdate(false)} style = {{marginRight : 5}} variant="contained" color="secondary">
+                            <Button onClick={() => setisUpdate(false)} style={{ marginRight: 5 }} variant="contained" color="secondary">
                                 Hủy
-                    </Button>
+                            </Button>
 
                             <Button onClick={handleSubmit} variant="contained" color="primary">
                                 Lưu
-                </Button></div>}
+                            </Button></div>}
                 </DialogActions>
             </Dialog>
         </div>

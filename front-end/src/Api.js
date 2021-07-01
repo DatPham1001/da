@@ -34,14 +34,11 @@ export const axiosPut = (token, url, data) => {
         },
     });
 };
-export const axiosDelete = (token, url, data) => {
+export const axiosDelete = (token, url) => {
     return axios.delete(baseURL + url, {
         headers: {
             "content-type": "application/json",
             "Authorization": token,
         },
-        data: {
-            ...data
-        }
     });
 };
